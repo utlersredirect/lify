@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+
+    <script type="text/javascript" data-cfasync="false">
+      // PASTE YOUR POPADS SCRIPT HERE
+    </script>
+    
+    <style>
+        body, html {
+            height: 100%; margin: 0; display: flex;
+            justify-content: center; align-items: center;
+            background-color: #f9f9f9; font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+        .container { text-align: center; padding: 20px; }
+        .loader {
+            border: 5px solid #e0e0e0; border-radius: 50%;
+            border-top: 5px solid #4285F4; /* Google Blue */
+            width: 50px; height: 50px;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 25px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .message { font-size: 20px; color: #5f6368; }
+        #countdown { font-weight: 600; }
+        /* This ad-spot div is optional. Some ad scripts automatically inject ads, 
+           others might need a placeholder div like this. */
+        .ad-spot { margin-top: 30px; min-height: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="loader"></div>
+        <div class="message">
+            You are being securely redirected in <span id="countdown">5</span> seconds...
+        </div>
+        <div class="ad-spot">
+            </div>
+    </div>
+
+    <script>
+    (function() {
+        // --- CONFIGURATION ---
+        const countdownSeconds = 5;
+
+        const countdownElement = document.getElementById('countdown');
+        let timeLeft = countdownSeconds;
+
+        // --- CORE LOGIC ---
+        // 1. Get the destination from the URL path.
+        // The Netlify rewrite rule passes the original path for us to use.
+        // e.g., for "mysite.com/https://google.com", pathname is "/https://google.com"
+        const path = window.location.pathname;
+        let destinationUrl = path.substring(1); // Remove the leading '/'
+
+        // 2. Handle invalid or empty destinations.
+        if (!destinationUrl || destinationUrl.toLowerCase() === 'redirect.html') {
+            // If someone lands on redirect.html directly, send them to the main page.
+            window.location.replace('/'); 
+            return;
+        }
+
+        // 3. Ensure the URL has a protocol (http:// or https://).
+        if (!/^https?:\/\//i.test(destinationUrl)) {
+            destinationUrl = 'https://' + destinationUrl;
+        }
+
+        // 4. Start the visual countdown.
+        const timer = setInterval(() => {
+            timeLeft--;
+            if (countdownElement) {
+                countdownElement.textContent = timeLeft;
+            }
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                // 5. REDIRECT!
+                window.location.replace(destinationUrl);
+            }
+        }, 1000);
+
+        // Initial text for the countdown element
+        if (countdownElement) {
+            countdownElement.textContent = countdownSeconds;
+        }
+    })();
+    </script>
+
+</body>
+</html>

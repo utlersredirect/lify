@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
+    
     <style>
         body, html {
             height: 100%; margin: 0; display: flex;
@@ -13,7 +14,7 @@
         .container { text-align: center; padding: 20px; }
         .loader {
             border: 5px solid #e0e0e0; border-radius: 50%;
-            border-top: 5px solid #4285F4;
+            border-top: 5px solid #4285F4; /* Google Blue */
             width: 50px; height: 50px;
             animation: spin 1.5s linear infinite;
             margin: 0 auto 25px auto;
@@ -23,14 +24,13 @@
         #countdown { font-weight: 600; }
         .ad-spot { 
             margin-top: 30px; 
-            width: 300px;
-            height: 250px;
-            /* Give it a border to see the container */
-            border: 1px solid #ccc;
+            /* The ad code defines the size, so we just need to provide a space */
+            min-height: 250px; 
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <div class="loader"></div>
         <div class="message">
@@ -38,27 +38,31 @@
         </div>
 
         <div class="ad-spot">
-            <iframe 
-                src="ad-container.html"
-                width="300" 
-                height="250"
-                frameborder="0" 
-                scrolling="no"
-                sandbox="allow-scripts allow-same-origin">
-            </iframe>
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : 'd75d312b08a7ea57caf11003d32a2d4c',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/d75d312b08a7ea57caf11003d32a2d4c/invoke.js"></script>
         </div>
     </div>
 
     <script>
     (function() {
-        const countdownSeconds = 9;
+        // --- CONFIGURATION ---
+        const countdownSeconds = 7;
         const countdownElement = document.getElementById('countdown');
         let timeLeft = countdownSeconds;
 
+        // --- CORE LOGIC ---
         const path = window.location.pathname;
         let destinationUrl = path.substring(1); 
 
-        if (!destinationUrl || destinationUrl.toLowerCase() === 'redirect.html' || destinationUrl.toLowerCase() === 'ad-container.html') {
+        if (!destinationUrl || destinationUrl.toLowerCase() === 'redirect.html') {
             window.location.replace('/'); 
             return;
         }
@@ -74,7 +78,6 @@
             }
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                // This will now execute without being hijacked.
                 window.location.replace(destinationUrl);
             }
         }, 1000);
@@ -84,5 +87,6 @@
         }
     })();
     </script>
+
 </body>
 </html>

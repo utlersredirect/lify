@@ -1,0 +1,6 @@
+# Netlify Redirect Rule
+# This rule handles all requests for pages that are not found.
+# It serves the /redirect.html page with a 200 OK status.
+# This is the key to fooling the ad verification bot.
+
+/* /redirect.html   200

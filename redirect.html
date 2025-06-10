@@ -4,94 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --accent-color: #ff4136;
+            --secondary-color: #444;
+        }
+
         body, html {
-            height: 100%; margin: 0; display: flex;
-            justify-content: center; align-items: center;
-            background-color: #f9f9f9; font-family: 'Segoe UI', Roboto, sans-serif;
+            height: 100%;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Chakra Petch', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
-        .container { text-align: center; padding: 20px; }
-        .loader {
-            border: 5px solid #e0e0e0; border-radius: 50%;
-            border-top: 5px solid #4285F4; /* Google Blue */
-            width: 50px; height: 50px;
-            animation: spin 1.5s linear infinite;
-            margin: 0 auto 25px auto;
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid var(--secondary-color);
+            background-color: #00000030;
+            box-shadow: 0 0 25px var(--accent-color);
+            animation: fadeIn 1s ease-in-out;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .message { font-size: 20px; color: #5f6368; }
-        #countdown { font-weight: 600; }
-        .ad-spot { 
-            margin-top: 30px; 
-            /* The ad code defines the size, so we just need to provide a space */
-            min-height: 250px; 
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .redirect-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .favicon {
+            width: 32px;
+            height: 32px;
+            border-radius: 5px;
+            background-color: var(--secondary-color);
+            flex-shrink: 0;
+        }
+
+        .message {
+            font-size: 1.5em; /* 24px */
+            word-break: break-all;
+        }
+        
+        .destination-url {
+            font-weight: 600;
+            color: var(--accent-color);
+            text-shadow: 0 0 5px var(--accent-color);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent-color);
+            border-radius: 4px;
+            transition: width 1s linear;
+            box-shadow: 0 0 10px var(--accent-color);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="loader"></div>
-        <div class="message">
-            You are being securely redirected in <span id="countdown">7</span> seconds...
+        <div class="redirect-info">
+            <img id="favicon" class="favicon" src="" alt="Site Logo">
+            <p class="message">
+                Redirecting to <span id="destination-url" class="destination-url">...</span>
+            </p>
         </div>
-<!--  
-        <div class="ad-spot">
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : 'd75d312b08a7ea57caf11003d32a2d4c',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/d75d312b08a7ea57caf11003d32a2d4c/invoke.js"></script>
-        </div> 
-          -->
-        <div class="ad-spot">
-            <script async="async" data-cfasync="false" src="//pl26777725.profitableratecpm.com/3968605f5d54d3857815dbff6b3b7ed1/invoke.js"></script>
-            <div id="container-3968605f5d54d3857815dbff6b3b7ed1"></div>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
         </div>
     </div>
 
     <script>
     (function() {
         // --- CONFIGURATION ---
-        const countdownSeconds = 7;
-        const countdownElement = document.getElementById('countdown');
-        let timeLeft = countdownSeconds;
+        const redirectDelaySeconds = 7;
+        const directAdLink = "https://shorturl.at/v4eyT"; // <-- Your ad link is now here
 
+        // --- DOM ELEMENTS ---
+        const destinationUrlElement = document.getElementById('destination-url');
+        const faviconElement = document.getElementById('favicon');
+        const progressBarElement = document.getElementById('progress-bar');
+        
         // --- CORE LOGIC ---
+        
+        // 1. Get Destination Info from the URL
         const path = window.location.pathname;
-        let destinationUrl = path.substring(1); 
+        let destination = path.substring(1); // Remove the leading '/'
+        let fullDestinationUrl = destination;
 
-        if (!destinationUrl || destinationUrl.toLowerCase() === 'redirect.html') {
-            window.location.replace('/'); 
-            return;
+        // Immediately check if the destination is valid
+        if (!destination || destination.toLowerCase() === 'redirect.html') {
+            // If no destination, just go to a default page (e.g., Google)
+            destination = 'google.com';
+            fullDestinationUrl = 'https://google.com';
+        } else {
+            // Ensure the URL has a protocol for the redirect
+            if (!/^https?:\/\//i.test(fullDestinationUrl)) {
+                fullDestinationUrl = 'https://' + fullDestinationUrl;
+            }
         }
-
-        if (!/^https?:\/\//i.test(destinationUrl)) {
-            destinationUrl = 'https://' + destinationUrl;
-        }
+        
+        // 2. Update the UI with Dynamic Content
+        destinationUrlElement.textContent = destination;
+        
+        // Fetch the favicon using DuckDuckGo's free service
+        faviconElement.src = `https://icons.duckduckgo.com/ip3/${destination}.ico`;
+        // Fallback in case the icon fails to load
+        faviconElement.onerror = () => {
+            faviconElement.style.display = 'none'; // Hide the broken image icon
+        };
+        
+        // 3. Start the Countdown and Redirect Logic
+        let progress = 0;
+        const intervalTime = 100; // Update progress bar every 100ms
+        const totalSteps = (redirectDelaySeconds * 1000) / intervalTime;
+        let currentStep = 0;
 
         const timer = setInterval(() => {
-            timeLeft--;
-            if (countdownElement) {
-                countdownElement.textContent = Math.max(0, timeLeft);
-            }
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                window.location.replace(destinationUrl);
-            }
-        }, 1000);
+            currentStep++;
+            progress = (currentStep / totalSteps) * 100;
+            progressBarElement.style.width = `${progress}%`;
 
-        if (countdownElement) {
-            countdownElement.textContent = countdownSeconds;
-        }
+            if (progress >= 100) {
+                clearInterval(timer);
+                
+                // --- THE REDIRECT ACTION ---
+                // Try to open the ad link in a new tab (might be blocked)
+                if (directAdLink) {
+                   window.open(directAdLink, '_blank');
+                }
+                
+                // Redirect the current tab to the final destination
+                window.location.replace(fullDestinationUrl);
+            }
+        }, intervalTime);
+
     })();
     </script>
-
 </body>
 </html>

@@ -22,6 +22,7 @@
             color: var(--text-color);
             font-family: 'Chakra Petch', sans-serif;
             display: flex;
+            flex-direction: column; /* Allow stacking of containers */
             justify-content: center;
             align-items: center;
             overflow: hidden;
@@ -36,6 +37,7 @@
             background-color: #00000030;
             box-shadow: 0 0 25px var(--accent-color);
             animation: fadeIn 1s ease-in-out;
+            margin-bottom: 20px; /* Add space between main box and ad */
         }
 
         @keyframes fadeIn {
@@ -60,7 +62,7 @@
         }
 
         .message {
-            font-size: 1.5em; /* 24px */
+            font-size: 1.5em;
             word-break: break-all;
         }
         
@@ -87,6 +89,12 @@
             transition: width 1s linear;
             box-shadow: 0 0 10px var(--accent-color);
         }
+        
+        /* New CSS for the banner ad container */
+        .ad-banner-container {
+            width: 320px;
+            height: 50px;
+        }
     </style>
 </head>
 <body>
@@ -103,11 +111,25 @@
         </div>
     </div>
 
+    <div class="ad-banner-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'fa3c96459ad61c9003f8f49bd6680151',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//wretchnavelpotent.com/fa3c96459ad61c9003f8f49bd6680151/invoke.js"></script>
+    </div>
+
+
     <script>
     (function() {
         // --- CONFIGURATION ---
         const redirectDelaySeconds = 7;
-        const directAdLink = "https://shorturl.at/v4eyT"; // <-- Your ad link is now here
+        const directAdLink = "https://shorturl.at/v4eyT"; // This will still try to run
 
         // --- DOM ELEMENTS ---
         const destinationUrlElement = document.getElementById('destination-url');
@@ -118,16 +140,13 @@
         
         // 1. Get Destination Info from the URL
         const path = window.location.pathname;
-        let destination = path.substring(1); // Remove the leading '/'
+        let destination = path.substring(1); 
         let fullDestinationUrl = destination;
 
-        // Immediately check if the destination is valid
         if (!destination || destination.toLowerCase() === 'redirect.html') {
-            // If no destination, just go to a default page (e.g., Google)
             destination = 'google.com';
             fullDestinationUrl = 'https://google.com';
         } else {
-            // Ensure the URL has a protocol for the redirect
             if (!/^https?:\/\//i.test(fullDestinationUrl)) {
                 fullDestinationUrl = 'https://' + fullDestinationUrl;
             }
@@ -135,17 +154,14 @@
         
         // 2. Update the UI with Dynamic Content
         destinationUrlElement.textContent = destination;
-        
-        // Fetch the favicon using DuckDuckGo's free service
         faviconElement.src = `https://icons.duckduckgo.com/ip3/${destination}.ico`;
-        // Fallback in case the icon fails to load
         faviconElement.onerror = () => {
-            faviconElement.style.display = 'none'; // Hide the broken image icon
+            faviconElement.style.display = 'none';
         };
         
         // 3. Start the Countdown and Redirect Logic
         let progress = 0;
-        const intervalTime = 100; // Update progress bar every 100ms
+        const intervalTime = 100;
         const totalSteps = (redirectDelaySeconds * 1000) / intervalTime;
         let currentStep = 0;
 
@@ -158,7 +174,7 @@
                 clearInterval(timer);
                 
                 // --- THE REDIRECT ACTION ---
-                // Try to open the ad link in a new tab (might be blocked)
+                // Try to open the direct ad link (might be blocked, but we try anyway)
                 if (directAdLink) {
                    window.open(directAdLink, '_blank');
                 }
